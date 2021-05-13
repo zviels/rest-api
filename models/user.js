@@ -8,7 +8,11 @@ module.exports = (sequelize, DataTypes) => {
     
     // Method For Defining Associations
 
-    static associate(models) {}
+    static associate({ Course }) {
+
+      User.hasMany(Course);
+
+    }
 
   }
 

@@ -8,7 +8,11 @@ module.exports = (sequelize, DataTypes) => {
 
     // Method For Defining Associations
 
-    static associate(models) {}
+    static associate({ User }) {
+
+      Course.belongsTo(User, { foreignKey: 'userId' });
+
+    }
 
   }
 
@@ -19,9 +23,8 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
     description: DataTypes.TEXT,
     estimatedTime: DataTypes.STRING,
-    materialsNeeded: DataTypes.STRING,
-    userId: DataTypes.INTEGER
-
+    materialsNeeded: DataTypes.STRING
+    
   }, { sequelize, modelName: 'Course' });
 
   return Course;

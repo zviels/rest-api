@@ -1,48 +1,56 @@
-'use strict';
+// Import Modules
 
-// load modules
 const express = require('express');
 const morgan = require('morgan');
 
-// variable to enable global error logging
+// Enable Global Error Logging
+
 const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'true';
 
-// create the Express app
+// Create The Express App
+
 const app = express();
 
-// setup morgan which gives us http request logging
+// Set Up Morgan For HTTP Request Logging
+
 app.use(morgan('dev'));
 
-// setup a friendly greeting for the root route
+// Set Up Root Route
+
 app.get('/', (req, res) => {
-  res.json({
-    message: 'Welcome to the REST API project!',
-  });
+
+  res.json({ message: 'Welcome To The REST API Project!' });
+
 });
 
-// send 404 if no other route matched
+// 404
+
 app.use((req, res) => {
-  res.status(404).json({
-    message: 'Route Not Found',
-  });
+
+  res.status(404).json({ message: 'Route Not Found!' });
+
 });
 
-// setup a global error handler
-app.use((err, req, res, next) => {
-  if (enableGlobalErrorLogging) {
-    console.error(`Global error handler: ${JSON.stringify(err.stack)}`);
-  }
+// Global Error Handler
 
-  res.status(err.status || 500).json({
-    message: err.message,
+app.use((error, req, res, next) => {
+
+  if (enableGlobalErrorLogging) 
+    console.error('Global Error Handler: ' + JSON.stringify(error.stack));
+
+  res.status(error.status || 500).json({
+
+    message: error.message,
     error: {},
+
   });
+
 });
 
-// set our port
-app.set('port', process.env.PORT || 5000);
+// Set Port
 
-// start listening on our port
-const server = app.listen(app.get('port'), () => {
-  console.log(`Express server is listening on port ${server.address().port}`);
-});
+const port = process.env.PORT || 5000;
+
+// Start The Server
+
+app.listen(port, () => console.log('Express Server Is Listening On Port ' + port));

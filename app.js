@@ -2,7 +2,9 @@
 
 const express = require('express');
 const morgan = require('morgan');
+
 const { sequelize } = require('./models');
+const apiRoutes = require('./routes');
 
 // Enable Global Error Logging
 
@@ -18,11 +20,15 @@ app.use(morgan('dev'));
 
 // Set Up Root Route
 
-app.get('/', async (req, res) => {
+app.get('/', (req, res) => {
 
     res.json({ message: 'Welcome To The REST API Project!' });
 
 });
+
+// Set Up API Routes
+
+app.use('/api', apiRoutes);
 
 // 404
 
@@ -36,6 +42,8 @@ app.use((req, res) => {
 
 app.use((error, req, res, next) => {
 
+  console.error('Middleware Reached Global Error Handler.');
+  
   if (enableGlobalErrorLogging) 
     console.error('Global Error Handler: ' + JSON.stringify(error.stack));
 

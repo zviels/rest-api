@@ -2,6 +2,7 @@
 
 const express = require('express');
 const morgan = require('morgan');
+const { sequelize } = require('./models');
 
 // Enable Global Error Logging
 
@@ -17,9 +18,9 @@ app.use(morgan('dev'));
 
 // Set Up Root Route
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
 
-  res.json({ message: 'Welcome To The REST API Project!' });
+    res.json({ message: 'Welcome To The REST API Project!' });
 
 });
 
@@ -53,4 +54,4 @@ const port = process.env.PORT || 5000;
 
 // Start The Server
 
-app.listen(port, () => console.log('Express Server Is Listening On Port ' + port));
+app.listen(port, () => console.log('Express Server Is Listening On Port ' + port + '..'));

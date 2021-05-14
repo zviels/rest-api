@@ -14,6 +14,10 @@ const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'tr
 
 const app = express();
 
+// Enable JSON Parsing
+
+app.use(express.json());
+
 // Set Up Morgan For HTTP Request Logging
 
 app.use(morgan('dev'));

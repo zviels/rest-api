@@ -58,7 +58,7 @@ const authenticateUser = async (req, res, next) => {
     // Continue With Processing The Request
 
     if (errorMessage)
-        res.status(401).json({ errorMessage: 'Access Denied.' });
+        res.status(401).json({ errorMessage: 'Access Denied - ' + errorMessage });
     
     else    
         next();

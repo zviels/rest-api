@@ -6,7 +6,7 @@ const handleAsyncOperation = (callback) => {
 
         try {
 
-            callback(req, res, next);
+            await callback(req, res, next);
 
         } catch (error) {
 

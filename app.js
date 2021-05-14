@@ -6,10 +6,6 @@ const morgan = require('morgan');
 const { sequelize } = require('./models');
 const apiRoutes = require('./routes');
 
-// Enable Global Error Logging
-
-const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'true';
-
 // Create The Express App
 
 const app = express();
@@ -46,10 +42,18 @@ app.use((req, res) => {
 
 app.use((error, req, res, next) => {
 
-  console.error('Middleware Reached Global Error Handler.');
+  const { name } = error;
+  const { errors } = error;
   
-  if (enableGlobalErrorLogging) 
-    console.error('Global Error Handler: ' + JSON.stringify(error.stack));
+  if (name === 'SequelizeValidationError' || name === 'SequelizeUniqueConstraintError') {
+
+    const errorMessages = errors.map(error => error.message);
+    return res.status(400).json(errorMessages);
+
+  }
+  
+  // if (enableGlobalErrorLogging) 
+  //   console.error('Global Error Handler: ' + JSON.stringify(error.stack));
 
   res.status(error.status || 500).json({
 

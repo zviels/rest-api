@@ -24,8 +24,7 @@ router.get('/users', authenticateUser, handleAsyncOperation (async (req, res, ne
 
         firstName: user.firstName,
         lastName: user.lastName,
-        emailAddress: user.emailAddress,
-        password: user.password
+        emailAddress: user.emailAddress
 
     });
     
@@ -35,6 +34,8 @@ router.get('/users', authenticateUser, handleAsyncOperation (async (req, res, ne
 
 router.post('/users', handleAsyncOperation (async (req, res, next) => {
 
+    console.log(handleAsyncOperation);
+    
     // Extract New User Data
 
     const newUser = req.body;

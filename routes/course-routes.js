@@ -84,16 +84,33 @@ router.put('/:id', authenticateUser, handleAsyncOperation (async (req, res, next
 
     if (course) {
 
-        await Course.update(
-            
-            { title, description, estimatedTime, materialsNeeded },
-            { where: { id: (+ id) } });
+        // Extract Authenticated User Data
 
-        return res.status(204).end();    
+        const { currentUser } = req;
+
+        // Ensure That The Authenticated User Is The Owner Of The Requested Course
+
+        if (currentUser.id === course.userId) {
+
+            // Actually Update The Course
+
+            await Course.update(
+            
+                { title, description, estimatedTime, materialsNeeded },
+                { where: { id: (+ id) } });
+    
+            res.status(204).end();  
+
+        }
+
+        // If The Authenticated User Is Not The Owner Of The Requested Course, Return Status Code '403'
+
+        else
+            res.status(403).end();
 
     }
 
-    // Otherwise, Create & Throw An Error
+    // If Course Doesn't Exist In The Database, Create & Throw An Error
 
     else
         throw CourseNotFoundError();
@@ -114,12 +131,29 @@ router.delete('/:id', authenticateUser, handleAsyncOperation (async (req, res, n
 
     if (course) {
 
-        await Course.destroy({ where: { id: + id } });
-        res.status(204).end();
+        // Extract Authenticated User Data
+
+        const { currentUser } = req;
+
+        // Ensure That The Authenticated User Is The Owner Of The Requested Course
+
+        if (currentUser.id === course.userId) {
+
+            // Actually Delete The Course
+
+            await Course.destroy({ where: { id: + id } });
+            res.status(204).end();
+        
+        }
+
+        // If The Authenticated User Is Not The Owner Of The Requested Course, Return Status Code '403'
+
+        else
+            res.status(403).end();
 
     }
 
-    // Otherwise, Throw A 'CourseNotFound' Error
+    // If Course Doesn't Exist In The Database, Create & Throw An Error
 
     else
         throw CourseNotFoundError();

@@ -1,0 +1,105 @@
+const express = require('express');
+
+const { User } = require('../models');
+const { Course } = require('../models');
+const authenticateUser = require('../functions/auth-user');
+const handleAsyncOperation = require('../functions/handle-async-operation');
+
+// Variables
+
+const router = express.Router();
+
+// Course Routes
+
+// GET Course Route
+
+router.get('/:id', handleAsyncOperation (async (req, res, next) => {
+
+    const { id } = req.params;
+    const course = await Course.findByPk(+ id, {
+
+        attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded'],
+        include: { model: User, attributes: ['id', 'firstName', 'lastName', 'emailAddress', 'password'] }
+
+    });
+
+    if (course)
+        res.status(200).json(course);
+
+    else {
+
+        const error = new Error('Course Not Found!');
+        error.status = 404;
+        throw error;
+
+    }    
+
+}));
+
+// GET Courses Route
+
+router.get('/', handleAsyncOperation (async (req, res, next) => {
+
+    const courses = await Course.findAll({ 
+            
+        attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded'],
+        include: { model: User, attributes: ['id', 'firstName', 'lastName', 'emailAddress', 'password'] } 
+    
+        });
+
+    res.status(200).json(courses);
+
+}));
+
+// POST Courses Route
+
+router.post('/', authenticateUser, handleAsyncOperation (async (req, res, next) => {
+
+    // Extract New Course Data
+
+    const newCourse = req.body;
+
+    // Create The New Course & Save It In A New Variable
+
+    const course = await Course.create(newCourse);
+
+    // Extract The ID Attribute From The Newly Created Course
+
+    const { id } = course;
+
+    // Set Status Code To 201, Redirect User To The Newly Created Course Page & Return No Content
+
+    res.status(201).location('/api/courses/' + id).end();
+
+}));
+
+// PUT Course Route
+
+router.put('/:id', authenticateUser, handleAsyncOperation (async (req, res, next) => {
+
+    const { id } = req.params;
+    const { title, description, estimatedTime, materialsNeeded } = req.body;
+
+    await Course.update(
+        
+        { title, description, estimatedTime, materialsNeeded },
+        { where: { id: (+ id) } });
+
+    res.status(204).end();    
+
+}));
+
+// DELETE Course Route
+
+router.delete('/:id', authenticateUser, handleAsyncOperation (async (req, res, next) => {
+
+    const { id } = req.params;
+    await Course.destroy({ where: { id: + id } });
+
+    res.status(204).end();
+
+}));
+
+// Export Routes
+
+module.exports = router;

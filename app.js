@@ -3,7 +3,7 @@
 const express = require('express');
 const morgan = require('morgan');
 
-const { sequelize } = require('./models');
+const connectToDatabase = require('./functions/connect-to-database');
 const apiRoutes = require('./routes');
 
 // Create The Express App
@@ -66,6 +66,10 @@ app.use((error, req, res, next) => {
 // Set Port
 
 const port = process.env.PORT || 5000;
+
+// Test The Connection To The Database
+
+connectToDatabase();
 
 // Start The Server
 

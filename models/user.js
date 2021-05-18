@@ -1,4 +1,5 @@
 const { Model } = require('sequelize');
+const bcrypt = require('bcrypt');
 
 // Create & Export The User Model
 
@@ -106,14 +107,14 @@ module.exports = (sequelize, DataTypes) => {
 
           msg: 'Password Is Required.'
 
-        },
-
-        len: {
-
-          args: [9, 40],
-          msg: 'The Password Should Be Between 9 And 40 Characters In Length.'
-
         }
+
+      },
+
+      set (password) {
+
+        const hashedPassword = bcrypt.hashSync(password, 10);
+        this.setDataValue('password', hashedPassword);
 
       }
       

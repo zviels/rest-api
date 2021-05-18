@@ -42,13 +42,9 @@ router.post('/', handleAsyncOperation (async (req, res, next) => {
 
     await User.create(newUser);
 
-    // Redirect User Back To The Root Route
+    // Set Status Code To '201', Redirect User Back To The Root Route & Return No Content 
 
-    res.setHeader('Location', '/');
-
-    // Set Status Code To '201' & Return No Content 
-
-    res.status(201).end();
+    res.status(201).location('/').end();
 
 }));
 

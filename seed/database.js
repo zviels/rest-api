@@ -1,6 +1,6 @@
 'use strict';
 
-const bcryptjs = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const Context = require('./context');
 
 class Database {
@@ -63,7 +63,7 @@ class Database {
     const usersWithHashedPasswords = [];
 
     for (const user of users) {
-      const hashedPassword = await bcryptjs.hash(user.password, 10);
+      const hashedPassword = await bcrypt.hash(user.password, 10);
       usersWithHashedPasswords.push({ ...user, password: hashedPassword });
     }
 

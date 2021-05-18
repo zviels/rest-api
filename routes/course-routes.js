@@ -2,6 +2,7 @@ const express = require('express');
 
 const { User } = require('../models');
 const { Course } = require('../models');
+const CourseNotFoundError = require('../functions/course-not-found-error');
 const authenticateUser = require('../functions/auth-user');
 const handleAsyncOperation = require('../functions/handle-async-operation');
 
@@ -26,13 +27,8 @@ router.get('/:id', handleAsyncOperation (async (req, res, next) => {
     if (course)
         res.status(200).json(course);
 
-    else {
-
-        const error = new Error('Course Not Found!');
-        error.status = 404;
-        throw error;
-
-    }    
+    else
+        throw CourseNotFoundError();
 
 }));
 
@@ -80,12 +76,27 @@ router.put('/:id', authenticateUser, handleAsyncOperation (async (req, res, next
     const { id } = req.params;
     const { title, description, estimatedTime, materialsNeeded } = req.body;
 
-    await Course.update(
-        
-        { title, description, estimatedTime, materialsNeeded },
-        { where: { id: (+ id) } });
+    // Ensure Course Existence
 
-    res.status(204).end();    
+    const course = await Course.findByPk(+ id);
+
+    // If Course Exists, Update It
+
+    if (course) {
+
+        await Course.update(
+            
+            { title, description, estimatedTime, materialsNeeded },
+            { where: { id: (+ id) } });
+
+        return res.status(204).end();    
+
+    }
+
+    // Otherwise, Create & Throw An Error
+
+    else
+        throw CourseNotFoundError();
 
 }));
 
@@ -94,9 +105,24 @@ router.put('/:id', authenticateUser, handleAsyncOperation (async (req, res, next
 router.delete('/:id', authenticateUser, handleAsyncOperation (async (req, res, next) => {
 
     const { id } = req.params;
-    await Course.destroy({ where: { id: + id } });
 
-    res.status(204).end();
+    // Ensure Course Existence
+
+    const course = await Course.findByPk(+ id);
+
+    // If Course Exists, Delete It
+
+    if (course) {
+
+        await Course.destroy({ where: { id: + id } });
+        res.status(204).end();
+
+    }
+
+    // Otherwise, Throw A 'CourseNotFound' Error
+
+    else
+        throw CourseNotFoundError();
 
 }));
 

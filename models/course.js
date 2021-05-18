@@ -31,6 +31,12 @@ module.exports = (sequelize, DataTypes) => {
 
           msg: 'Title Is Required.'
 
+        },
+
+        notEmpty: {
+
+          msg: 'Please Provide A Title.'
+
         }
 
       }
@@ -47,6 +53,12 @@ module.exports = (sequelize, DataTypes) => {
         notNull: {
 
           msg: 'Description Is Required.'
+
+        },
+
+        notEmpty: {
+
+          msg: 'Please Provide A Description.'
 
         }
 
